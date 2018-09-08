@@ -1,0 +1,19 @@
+/// per la convergenza della funzione multimodale rastrigin10, i parametri devono essere
+
+lambda = 600;
+xmean = rand(N,1)*10-5;
+sigma = 5;
+
+ 68400: 6.960D-11   
+ ans  =
+ 
+  - 4.393D-08  
+  - 0.0000002  
+  - 0.0000002  
+    1.744D-08  
+  - 2.530D-08  
+    6.449D-08  
+    3.056D-08  
+  - 4.704D-08  
+    1.018D-08  
+    2.119D-08

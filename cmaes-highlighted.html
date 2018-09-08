@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="Generator" content="Kate, the KDE Advanced Text Editor" />
+<title>cmaes.sci</title>
+</head>
+<body>
+<pre>
+<span style='color: #008000'><b>function</b></span><span style='color: #141312'> [xmin] = cmaes(fitness_function,N,sigma)</span>
+
+<span style='color: #888786'><i>// INPUT PARAMETERS</i></span>
+<span style='color: #888786'><i>// ----------------</i></span>
+<span style='color: #888786'><i>// fitness_function -&gt; name of the fitness function (see below for the list)</i></span>
+<span style='color: #888786'><i>// N                -&gt; problem dimension</i></span>
+<span style='color: #888786'><i>// sigma            -&gt; step size</i></span>
+
+<span style='color: #141312'>xmin=[]; </span><span style='color: #888786'><i>// output initialization</i></span>
+
+<span style='color: #888786'><i>// --------------------  Initialization --------------------------------</i></span>
+
+<span style='color: #141312'>xmean = </span><span style='color: #0000ff'><b><i>rand</b></i></span><span style='color: #141312'>(N,</span><span style='color: #b08000'>1</span><span style='color: #141312'>);     </span><span style='color: #888786'><i>// variables random initial point</i></span>
+<span style='color: #888786'><i>// --- alternative 1: x uniform in [-5,5]</i></span>
+<span style='color: #888786'><i>// xmean = rand(N,1)*10-5;</i></span>
+<span style='color: #888786'><i>// --- alternative 2: x uniform in [-5,5]^2 and far from the global minimum (0,0)</i></span>
+<span style='color: #888786'><i>// while (norm(xmean(1))&lt;4 | norm(xmean(2))&lt;4) do</i></span>
+<span style='color: #888786'><i>//   xmean = rand(N,1)*10-5;</i></span>
+<span style='color: #888786'><i>// end;</i></span>
+
+<span style='color: #141312'>stopfitness = </span><span style='color: #b08000'>1</span><span style='color: #141312'>D-</span><span style='color: #b08000'>10</span><span style='color: #141312'>;   </span><span style='color: #888786'><i>// stop if fitness &lt; stopfitness</i></span>
+<span style='color: #141312'>stopeval = </span><span style='color: #b08000'>1000</span><span style='color: #141312'>*(N^</span><span style='color: #b08000'>2</span><span style='color: #141312'>); </span><span style='color: #888786'><i>// stop after stopeval number of function evaluations</i></span>
+
+<span style='color: #000080'><b>if</b></span><span style='color: #141312'> N==</span><span style='color: #b08000'>2</span><span style='color: #141312'> </span><span style='color: #000080'><b>then</b></span><span style='color: #141312'>           </span><span style='color: #888786'><i>// if problem dimension is 2</i></span>
+<span style='color: #141312'>  vx(</span><span style='color: #008080'><b>$</b></span><span style='color: #141312'>+</span><span style='color: #b08000'>1</span><span style='color: #141312'>)=xmean(</span><span style='color: #b08000'>1</span><span style='color: #141312'>);    </span><span style='color: #888786'><i>// save x value for 2D plot</i></span>
+<span style='color: #141312'>  vy(</span><span style='color: #008080'><b>$</b></span><span style='color: #141312'>+</span><span style='color: #b08000'>1</span><span style='color: #141312'>)=xmean(</span><span style='color: #b08000'>2</span><span style='color: #141312'>);    </span><span style='color: #888786'><i>// save y value for 2D plot</i></span>
+<span style='color: #000080'><b>end</b></span><span style='color: #141312'>;</span>
+
+<span style='color: #888786'><i>// Strategy parameter setting: Selection</i></span>
+<span style='color: #141312'>lambda = </span><span style='color: #b08000'>4</span><span style='color: #141312'>+</span><span style='color: #0000ff'><b><i>floor</b></i></span><span style='color: #141312'>(</span><span style='color: #b08000'>3</span><span style='color: #141312'>*</span><span style='color: #0000ff'><b><i>log</b></i></span><span style='color: #141312'>(N));     </span><span style='color: #888786'><i>// population size, offspring number</i></span>
+<span style='color: #888786'><i>// lambda = 600;                // for rastrigin fitness function only</i></span>
+<span style='color: #141312'>mu = </span><span style='color: #0000ff'><b><i>floor</b></i></span><span style='color: #141312'>(lambda/</span><span style='color: #b08000'>2</span><span style='color: #141312'>);           </span><span style='color: #888786'><i>// number of parents/points for recombination</i></span>
+<span style='color: #141312'>weights = </span><span style='color: #0000ff'><b><i>log</b></i></span><span style='color: #141312'>(mu+</span><span style='color: #b08000'>1</span><span style='color: #141312'>)-</span><span style='color: #0000ff'><b><i>log</b></i></span><span style='color: #141312'>(</span><span style='color: #b08000'>1</span><span style='color: #141312'>:mu)'; </span><span style='color: #888786'><i>// muXone array for weighted recombination</i></span>
+<span style='color: #141312'>weights = weights/</span><span style='color: #0000ff'><b><i>sum</b></i></span><span style='color: #141312'>(weights); </span><span style='color: #888786'><i>// normalize recombination weights array</i></span>
+<span style='color: #141312'>mueff = (</span><span style='color: #0000ff'><b><i>sum</b></i></span><span style='color: #141312'>(weights)^</span><span style='color: #b08000'>2</span><span style='color: #141312'>)/</span><span style='color: #0000ff'><b><i>sum</b></i></span><span style='color: #141312'>(weights .^</span><span style='color: #b08000'>2</span><span style='color: #141312'>); </span><span style='color: #888786'><i>// variance-effective size of mu</i></span>
+
+<span style='color: #888786'><i>// Strategy parameter setting: Adaptation</i></span>
+<span style='color: #141312'>cc = </span><span style='color: #b08000'>4</span><span style='color: #141312'>/(N+</span><span style='color: #b08000'>4</span><span style='color: #141312'>);                 </span><span style='color: #888786'><i>// time constant for cumulation for covariance matrix</i></span>
+<span style='color: #141312'>cs = (mueff+</span><span style='color: #b08000'>2</span><span style='color: #141312'>)/((N+mueff)+</span><span style='color: #b08000'>3</span><span style='color: #141312'>); </span><span style='color: #888786'><i>// t-const for cumulation for sigma control</i></span>
+<span style='color: #141312'>mucov = mueff;                </span><span style='color: #888786'><i>// size of mu used for calculating learning rate ccov</i></span>
+<span style='color: #141312'>ccov = (((</span><span style='color: #b08000'>1</span><span style='color: #141312'>/mucov)*</span><span style='color: #b08000'>2</span><span style='color: #141312'>)/((N+1.4)^</span><span style='color: #b08000'>2</span><span style='color: #141312'>)+(</span><span style='color: #b08000'>1</span><span style='color: #141312'>-</span><span style='color: #b08000'>1</span><span style='color: #141312'>/mucov)*((</span><span style='color: #b08000'>2</span><span style='color: #141312'>*mueff-</span><span style='color: #b08000'>1</span><span style='color: #141312'>)/((N+</span><span style='color: #b08000'>2</span><span style='color: #141312'>)^</span><span style='color: #b08000'>2</span><span style='color: #141312'>+</span><span style='color: #b08000'>2</span><span style='color: #141312'>*mueff))); </span><span style='color: #888786'><i>// covariance matrix</i></span>
+<span style='color: #141312'>damps = (</span><span style='color: #b08000'>1</span><span style='color: #141312'>+</span><span style='color: #b08000'>2</span><span style='color: #141312'>*</span><span style='color: #0000ff'><b><i>max</b></i></span><span style='color: #141312'>(</span><span style='color: #b08000'>0</span><span style='color: #141312'>,(</span><span style='color: #0000ff'><b><i>sqrt</b></i></span><span style='color: #141312'>((mueff-</span><span style='color: #b08000'>1</span><span style='color: #141312'>)/(N+</span><span style='color: #b08000'>1</span><span style='color: #141312'>))-</span><span style='color: #b08000'>1</span><span style='color: #141312'>))+cs); </span><span style='color: #888786'><i>// damping for sigma</i></span>
+
+<span style='color: #888786'><i>// Initialize dynamic (internal) strategy parameters and constants</i></span>
+<span style='color: #141312'>pc = </span><span style='color: #0000ff'><b><i>zeros</b></i></span><span style='color: #141312'>(N,</span><span style='color: #b08000'>1</span><span style='color: #141312'>);  </span><span style='color: #888786'><i>// evolution paths for C</i></span>
+<span style='color: #141312'>ps = </span><span style='color: #0000ff'><b><i>zeros</b></i></span><span style='color: #141312'>(N,</span><span style='color: #b08000'>1</span><span style='color: #141312'>);  </span><span style='color: #888786'><i>// evolution paths forsigma</i></span>
+<span style='color: #141312'>B = </span><span style='color: #0000ff'><b><i>eye</b></i></span><span style='color: #141312'>(N,N);     </span><span style='color: #888786'><i>// B defines the coordinate system</i></span>
+<span style='color: #141312'>D = </span><span style='color: #0000ff'><b><i>eye</b></i></span><span style='color: #141312'>(N,N);     </span><span style='color: #888786'><i>// diagonal matrix D defines the scaling</i></span>
+<span style='color: #141312'>C = (B*D)*(B*D)'; </span><span style='color: #888786'><i>// covariance matrix</i></span>
+<span style='color: #141312'>chiN = (N^0.5)*(</span><span style='color: #b08000'>1</span><span style='color: #141312'>-</span><span style='color: #b08000'>1</span><span style='color: #141312'>/(</span><span style='color: #b08000'>4</span><span style='color: #141312'>*N)+</span><span style='color: #b08000'>1</span><span style='color: #141312'>/(</span><span style='color: #b08000'>21</span><span style='color: #141312'>*(N^</span><span style='color: #b08000'>2</span><span style='color: #141312'>))); </span><span style='color: #888786'><i>// expectation of ||N(0,I)|| == norm(rand(N,1))</i></span>
+
+<span style='color: #888786'><i>// -------------------- Generation Loop --------------------------------</i></span>
+
+<span style='color: #141312'>counteval = </span><span style='color: #b08000'>0</span><span style='color: #141312'>;</span>
+<span style='color: #000080'><b>while</b></span><span style='color: #141312'> counteval&lt;stopeval</span>
+
+<span style='color: #141312'>  </span><span style='color: #888786'><i>// Generate and evaluate lambda offspring</i></span>
+<span style='color: #141312'>  z = </span><span style='color: #0000ff'><b><i>rand</b></i></span><span style='color: #141312'>(N,lambda,</span><span style='color: #bf0303'>"normal"</span><span style='color: #141312'>); </span><span style='color: #888786'><i>// array of normally distributed mutation vectors</i></span>
+<span style='color: #141312'>  </span><span style='color: #000080'><b>for</b></span><span style='color: #141312'> k = </span><span style='color: #b08000'>1</span><span style='color: #141312'>:lambda</span>
+<span style='color: #141312'>    x(:,k) = xmean+sigma*((B*D)*z(:,k)); </span><span style='color: #888786'><i>// add mutation</i></span>
+<span style='color: #141312'>    fitness(</span><span style='color: #b08000'>1</span><span style='color: #141312'>,k) = </span><span style='color: #0000ff'><b><i>matrix</b></i></span><span style='color: #141312'>(</span><span style='color: #0000ff'><b><i>evstr</b></i></span><span style='color: #141312'>(fitness_function+</span><span style='color: #bf0303'>"(x(:,k))"</span><span style='color: #141312'>),</span><span style='color: #b08000'>1</span><span style='color: #141312'>,-</span><span style='color: #b08000'>1</span><span style='color: #141312'>); </span><span style='color: #888786'><i>// fitness function call</i></span>
+<span style='color: #141312'>    counteval = counteval+</span><span style='color: #b08000'>1</span><span style='color: #141312'>;</span>
+<span style='color: #141312'>  </span><span style='color: #000080'><b>end</b></span><span style='color: #141312'>;</span>
+
+<span style='color: #141312'>  </span><span style='color: #888786'><i>// Sort by fitness and compute weighted mean into xmean</i></span>
+<span style='color: #141312'>  [fitness,index] = </span><span style='color: #0000ff'><b><i>gsort</b></i></span><span style='color: #141312'>(fitness,'g','i'); </span><span style='color: #888786'><i>// minimization</i></span>
+<span style='color: #141312'>  xmean = x(:,index(</span><span style='color: #b08000'>1</span><span style='color: #141312'>:mu))*weights;         </span><span style='color: #888786'><i>// recombination, new mean value</i></span>
+<span style='color: #141312'>  zmean = z(:,index(</span><span style='color: #b08000'>1</span><span style='color: #141312'>:mu))*weights;         </span><span style='color: #888786'><i>// == sigma^-1*D^-1*B''*(xmean-xold)</i></span>
+
+<span style='color: #141312'>  </span><span style='color: #888786'><i>// Cumulation: Update evolution paths</i></span>
+<span style='color: #141312'>  ps = ((</span><span style='color: #b08000'>1</span><span style='color: #141312'>-cs)*ps+</span><span style='color: #0000ff'><b><i>sqrt</b></i></span><span style='color: #141312'>((cs*(</span><span style='color: #b08000'>2</span><span style='color: #141312'>-cs))*mueff)*(B*zmean));</span>
+<span style='color: #141312'>  hsig = (</span><span style='color: #0000ff'><b><i>norm</b></i></span><span style='color: #141312'>(ps)/</span><span style='color: #0000ff'><b><i>sqrt</b></i></span><span style='color: #141312'>((</span><span style='color: #b08000'>1</span><span style='color: #141312'>-(</span><span style='color: #b08000'>1</span><span style='color: #141312'>-cs)^((</span><span style='color: #b08000'>2</span><span style='color: #141312'>*counteval)/lambda))))/chiN &lt; (1.4+</span><span style='color: #b08000'>2</span><span style='color: #141312'>/(N+</span><span style='color: #b08000'>1</span><span style='color: #141312'>));</span>
+
+<span style='color: #141312'>  pc = ((</span><span style='color: #b08000'>1</span><span style='color: #141312'>-cc)*pc+(hsig*</span><span style='color: #0000ff'><b><i>sqrt</b></i></span><span style='color: #141312'>((cc*(</span><span style='color: #b08000'>2</span><span style='color: #141312'>-cc))*mueff))*((B*D)*zmean));</span>
+
+<span style='color: #141312'>  </span><span style='color: #888786'><i>// Adapt covariance matrix C</i></span>
+<span style='color: #141312'>  C = (((</span><span style='color: #b08000'>1</span><span style='color: #141312'>-ccov)*C+(ccov*(</span><span style='color: #b08000'>1</span><span style='color: #141312'>/mucov))*(pc*pc'+(((</span><span style='color: #b08000'>1</span><span style='color: #141312'>-hsig)*cc)*(</span><span style='color: #b08000'>2</span><span style='color: #141312'>-cc))*C))+(((ccov*(</span><span style='color: #b08000'>1</span><span style='color: #141312'>-</span><span style='color: #b08000'>1</span><span style='color: #141312'>/mucov))*((B*D)*z(:,index(</span><span style='color: #b08000'>1</span><span style='color: #141312'>:mu))))*</span><span style='color: #0000ff'><b><i>diag</b></i></span><span style='color: #141312'>(weights))*((B*D)*z(:,index(</span><span style='color: #b08000'>1</span><span style='color: #141312'>:mu)))'); </span><span style='color: #888786'><i>// plus rank mu update % plus rank one update% regard old matrix</i></span>
+
+<span style='color: #141312'>  </span><span style='color: #888786'><i>// Adapt step size sigma</i></span>
+<span style='color: #141312'>  sigma = sigma*</span><span style='color: #0000ff'><b><i>exp</b></i></span><span style='color: #141312'>((cs/damps)*(</span><span style='color: #0000ff'><b><i>norm</b></i></span><span style='color: #141312'>(ps)/chiN-</span><span style='color: #b08000'>1</span><span style='color: #141312'>));</span>
+
+<span style='color: #141312'>  </span><span style='color: #888786'><i>// Update B and D from C</i></span>
+<span style='color: #141312'>  C = (</span><span style='color: #0000ff'><b><i>triu</b></i></span><span style='color: #141312'>(C)+</span><span style='color: #0000ff'><b><i>triu</b></i></span><span style='color: #141312'>(C,</span><span style='color: #b08000'>1</span><span style='color: #141312'>)');</span>
+<span style='color: #141312'>  [B,D] = </span><span style='color: #0000ff'><b><i>spec</b></i></span><span style='color: #141312'>(C);</span>
+<span style='color: #141312'>  D = </span><span style='color: #0000ff'><b><i>diag</b></i></span><span style='color: #141312'>(</span><span style='color: #0000ff'><b><i>sqrt</b></i></span><span style='color: #141312'>(</span><span style='color: #0000ff'><b><i>diag</b></i></span><span style='color: #141312'>(D)));  </span><span style='color: #888786'><i>// D contains standard deviations now</i></span>
+
+<span style='color: #141312'>  </span><span style='color: #888786'><i>// Break, if fitness is good enough</i></span>
+<span style='color: #141312'>  </span><span style='color: #000080'><b>if</b></span><span style='color: #141312'> fitness(</span><span style='color: #b08000'>1</span><span style='color: #141312'>)&lt;=stopfitness </span><span style='color: #000080'><b>then</b></span>
+<span style='color: #141312'>    </span><span style='color: #800000'><b>break</b></span><span style='color: #141312'>;</span>
+<span style='color: #141312'>  </span><span style='color: #000080'><b>end</b></span><span style='color: #141312'>;</span>
+
+<span style='color: #141312'>  </span><span style='color: #0000ff'><b><i>disp</b></i></span><span style='color: #141312'>(</span><span style='color: #0000ff'><b><i>string</b></i></span><span style='color: #141312'>(counteval)+</span><span style='color: #bf0303'>": "</span><span style='color: #141312'>+</span><span style='color: #0000ff'><b><i>string</b></i></span><span style='color: #141312'>(fitness(</span><span style='color: #b08000'>1</span><span style='color: #141312'>)));</span>
+
+<span style='color: #141312'>  </span><span style='color: #000080'><b>if</b></span><span style='color: #141312'> N==</span><span style='color: #b08000'>2</span><span style='color: #141312'> </span><span style='color: #000080'><b>then</b></span><span style='color: #141312'>               </span><span style='color: #888786'><i>// if problem dimension is 2</i></span>
+<span style='color: #141312'>    vx(</span><span style='color: #008080'><b>$</b></span><span style='color: #141312'>+</span><span style='color: #b08000'>1</span><span style='color: #141312'>) = x(</span><span style='color: #b08000'>1</span><span style='color: #141312'>,index(</span><span style='color: #b08000'>1</span><span style='color: #141312'>)); </span><span style='color: #888786'><i>// save x value for 2D plot</i></span>
+<span style='color: #141312'>    vy(</span><span style='color: #008080'><b>$</b></span><span style='color: #141312'>+</span><span style='color: #b08000'>1</span><span style='color: #141312'>) = x(</span><span style='color: #b08000'>2</span><span style='color: #141312'>,index(</span><span style='color: #b08000'>1</span><span style='color: #141312'>)); </span><span style='color: #888786'><i>// save y value for 2D plot</i></span>
+<span style='color: #141312'>  </span><span style='color: #000080'><b>end</b></span><span style='color: #141312'>;</span>
+
+<span style='color: #141312'>  </span><span style='color: #888786'><i>// Save the best fitness and the mean fitness of this generation for plot</i></span>
+<span style='color: #141312'>  best_fitness(</span><span style='color: #008080'><b>$</b></span><span style='color: #141312'>+</span><span style='color: #b08000'>1</span><span style='color: #141312'>) = fitness(</span><span style='color: #b08000'>1</span><span style='color: #141312'>);</span>
+<span style='color: #141312'>  mean_fitness(</span><span style='color: #008080'><b>$</b></span><span style='color: #141312'>+</span><span style='color: #b08000'>1</span><span style='color: #141312'>) = </span><span style='color: #0000ff'><b><i>mean</b></i></span><span style='color: #141312'>(fitness);</span>
+<span style='color: #000080'><b>end</b></span><span style='color: #141312'>;</span>
+
+<span style='color: #888786'><i>// -------------------- Ending Message ---------------------------------</i></span>
+<span style='color: #0000ff'><b><i>disp</b></i></span><span style='color: #141312'>(</span><span style='color: #0000ff'><b><i>string</b></i></span><span style='color: #141312'>(counteval)+</span><span style='color: #bf0303'>": "</span><span style='color: #141312'>+</span><span style='color: #0000ff'><b><i>string</b></i></span><span style='color: #141312'>(fitness(</span><span style='color: #b08000'>1</span><span style='color: #141312'>)));</span>
+<span style='color: #141312'>xmin = x(:,index(</span><span style='color: #b08000'>1</span><span style='color: #141312'>)); </span><span style='color: #888786'><i>// Return best point of last generation.</i></span>
+
+<span style='color: #000080'><b>if</b></span><span style='color: #141312'> N==</span><span style='color: #b08000'>2</span><span style='color: #141312'> </span><span style='color: #000080'><b>then</b></span><span style='color: #141312'>                </span><span style='color: #888786'><i>// if problem dimension is 2</i></span>
+
+<span style='color: #141312'>  </span><span style='color: #888786'><i>// --- 3D plot of the function</i></span>
+<span style='color: #141312'>  scf();                    </span><span style='color: #888786'><i>// new plot</i></span>
+<span style='color: #141312'>  x=[-</span><span style='color: #b08000'>5</span><span style='color: #141312'>:.1:</span><span style='color: #b08000'>5</span><span style='color: #141312'>];              </span><span style='color: #888786'><i>// range</i></span>
+<span style='color: #141312'>  </span><span style='color: #000080'><b>if</b></span><span style='color: #141312'> (fitness_function==</span><span style='color: #bf0303'>"frast"</span><span style='color: #141312'> | fitness_function==</span><span style='color: #bf0303'>"frast10"</span><span style='color: #141312'> | fitness_function==</span><span style='color: #bf0303'>"frast1000"</span><span style='color: #141312'>) </span><span style='color: #000080'><b>then</b></span>
+<span style='color: #141312'>    </span><span style='color: #0000ff'><b><i>subplot</b></i></span><span style='color: #141312'>(</span><span style='color: #b08000'>211</span><span style='color: #141312'>);           </span><span style='color: #888786'><i>// plot in the upper half of the figure</i></span>
+<span style='color: #141312'>  </span><span style='color: #000080'><b>end</b></span><span style='color: #141312'>;</span>
+<span style='color: #141312'>  z=</span><span style='color: #0000ff'><b><i>eval3d</b></i></span><span style='color: #141312'>(</span><span style='color: #0000ff'><b><i>eval</b></i></span><span style='color: #141312'>(fitness_function+</span><span style='color: #bf0303'>"_2"</span><span style='color: #141312'>),x); </span><span style='color: #888786'><i>// z=f(x)</i></span>
+<span style='color: #141312'>  </span><span style='color: #0000ff'><b><i>plot3d1</b></i></span><span style='color: #141312'>(x,x,z);</span>
+<span style='color: #141312'>  </span><span style='color: #0000ff'><b><i>xset</b></i></span><span style='color: #141312'>(</span><span style='color: #bf0303'>"fpf"</span><span style='color: #141312'>,</span><span style='color: #bf0303'>" "</span><span style='color: #141312'>)           </span><span style='color: #888786'><i>// don't plot level curves' values</i></span>
+
+<span style='color: #141312'>  </span><span style='color: #888786'><i>// --- 2D plot of the level curves</i></span>
+<span style='color: #141312'>  </span><span style='color: #000080'><b>if</b></span><span style='color: #141312'> (fitness_function==</span><span style='color: #bf0303'>"frast"</span><span style='color: #141312'> | fitness_function==</span><span style='color: #bf0303'>"frast10"</span><span style='color: #141312'> | fitness_function==</span><span style='color: #bf0303'>"frast1000"</span><span style='color: #141312'>) </span><span style='color: #000080'><b>then</b></span>
+<span style='color: #141312'>    </span><span style='color: #0000ff'><b><i>subplot</b></i></span><span style='color: #141312'>(</span><span style='color: #b08000'>212</span><span style='color: #141312'>);           </span><span style='color: #888786'><i>// plot in the lower half of the figure</i></span>
+<span style='color: #141312'>    </span><span style='color: #0000ff'><b><i>contour2d</b></i></span><span style='color: #141312'>(x,x,z,</span><span style='color: #b08000'>10</span><span style='color: #141312'>);</span>
+<span style='color: #141312'>  </span><span style='color: #000080'><b>else</b></span>
+<span style='color: #141312'>    </span><span style='color: #0000ff'><b><i>contour</b></i></span><span style='color: #141312'>(x,x,z,</span><span style='color: #b08000'>10</span><span style='color: #141312'>,flag=[</span><span style='color: #b08000'>1</span><span style='color: #141312'> </span><span style='color: #b08000'>2</span><span style='color: #141312'> </span><span style='color: #b08000'>4</span><span style='color: #141312'>], zlev=-</span><span style='color: #b08000'>10</span><span style='color: #141312'>); </span><span style='color: #888786'><i>// plot level curves on plan z=-10</i></span>
+<span style='color: #141312'>  </span><span style='color: #000080'><b>end</b></span><span style='color: #141312'>;</span>
+<span style='color: #141312'>  f=</span><span style='color: #0000ff'><b><i>get</b></i></span><span style='color: #141312'>(</span><span style='color: #bf0303'>"current_figure"</span><span style='color: #141312'>);</span>
+<span style='color: #141312'>  f.figure_size=[</span><span style='color: #b08000'>800</span><span style='color: #141312'>,</span><span style='color: #b08000'>600</span><span style='color: #141312'>];  </span><span style='color: #888786'><i>// change figure size</i></span>
+
+<span style='color: #141312'>  </span><span style='color: #888786'><i>// --- 2D plot of the level curves and the path of the solution</i></span>
+<span style='color: #141312'>  scf();</span>
+<span style='color: #141312'>  </span><span style='color: #0000ff'><b><i>contour2d</b></i></span><span style='color: #141312'>(x,x,z,</span><span style='color: #b08000'>10</span><span style='color: #141312'>);</span>
+<span style='color: #141312'>  </span><span style='color: #0000ff'><b><i>plot2d</b></i></span><span style='color: #141312'>(vx,vy);           </span><span style='color: #888786'><i>// plot the path taken by the solution</i></span>
+<span style='color: #141312'>  f=</span><span style='color: #0000ff'><b><i>get</b></i></span><span style='color: #141312'>(</span><span style='color: #bf0303'>"current_figure"</span><span style='color: #141312'>);</span>
+<span style='color: #141312'>  f.figure_size=[</span><span style='color: #b08000'>800</span><span style='color: #141312'>,</span><span style='color: #b08000'>600</span><span style='color: #141312'>];</span>
+<span style='color: #000080'><b>end</b></span><span style='color: #141312'>;</span>
+
+<span style='color: #888786'><i>// --- plot the best fitness</i></span>
+<span style='color: #141312'>scf();</span>
+<span style='color: #0000ff'><b><i>plot2d</b></i></span><span style='color: #141312'>(best_fitness);</span>
+<span style='color: #141312'>f=</span><span style='color: #0000ff'><b><i>get</b></i></span><span style='color: #141312'>(</span><span style='color: #bf0303'>"current_figure"</span><span style='color: #141312'>);</span>
+<span style='color: #141312'>f.figure_size=[</span><span style='color: #b08000'>800</span><span style='color: #141312'>,</span><span style='color: #b08000'>600</span><span style='color: #141312'>];</span>
+<span style='color: #141312'>a=f.children;</span>
+<span style='color: #141312'>a.log_flags=</span><span style='color: #bf0303'>"nln"</span><span style='color: #141312'>;         </span><span style='color: #888786'><i>// logarithmic scale of the y axe</i></span>
+<span style='color: #141312'>a.title.text=fitness_function+</span><span style='color: #bf0303'>": fitness migliore (in rosso) e fitness media (in nero) in funzione della generazione"</span>
+<span style='color: #141312'>a.x_label.text=</span><span style='color: #bf0303'>"generazione"</span><span style='color: #141312'>;</span>
+<span style='color: #141312'>a.y_label.text=</span><span style='color: #bf0303'>"fitness"</span><span style='color: #141312'>;</span>
+<span style='color: #141312'>p=f.children.children.children;</span>
+<span style='color: #141312'>p.line_mode=</span><span style='color: #bf0303'>"off"</span><span style='color: #141312'>;         </span><span style='color: #888786'><i>// don't plot line between points</i></span>
+<span style='color: #141312'>p.mark_mode=</span><span style='color: #bf0303'>"on"</span><span style='color: #141312'>;          </span><span style='color: #888786'><i>// plot marks</i></span>
+<span style='color: #141312'>p.mark_size_unit=</span><span style='color: #bf0303'>"point"</span><span style='color: #141312'>;</span>
+<span style='color: #141312'>p.mark_size=</span><span style='color: #b08000'>3</span><span style='color: #141312'>;</span>
+<span style='color: #141312'>p.mark_foreground=</span><span style='color: #b08000'>5</span><span style='color: #141312'>;</span>
+
+<span style='color: #888786'><i>// --- plot the mean fitness</i></span>
+<span style='color: #0000ff'><b><i>plot2d</b></i></span><span style='color: #141312'>(mean_fitness);</span>
+<span style='color: #141312'>f=</span><span style='color: #0000ff'><b><i>get</b></i></span><span style='color: #141312'>(</span><span style='color: #bf0303'>"current_figure"</span><span style='color: #141312'>);</span>
+<span style='color: #141312'>p=f.children.children.children;</span>
+<span style='color: #141312'>p.line_mode=</span><span style='color: #bf0303'>"off"</span><span style='color: #141312'>;</span>
+<span style='color: #141312'>p.mark_mode=</span><span style='color: #bf0303'>"on"</span><span style='color: #141312'>;</span>
+<span style='color: #141312'>p.mark_size_unit=</span><span style='color: #bf0303'>"point"</span><span style='color: #141312'>;</span>
+<span style='color: #141312'>p.mark_size=</span><span style='color: #b08000'>3</span><span style='color: #141312'>;</span>
+
+<span style='color: #008000'><b>endfunction</b></span>
+
+<span style='color: #888786'><i>// =================== Fitness functions ===============================</i></span>
+
+<span style='color: #888786'><i>// --- n-dimensional fitness functions</i></span>
+
+<span style='color: #008000'><b>function</b></span><span style='color: #141312'> [f] = fsphere(x)</span>
+<span style='color: #141312'>  f = </span><span style='color: #0000ff'><b><i>sum</b></i></span><span style='color: #141312'>(x .^</span><span style='color: #b08000'>2</span><span style='color: #141312'>,'r');</span>
+<span style='color: #008000'><b>endfunction</b></span>
+
+<span style='color: #008000'><b>function</b></span><span style='color: #141312'> [f] = fschwefel(x)</span>
+<span style='color: #141312'>  f = </span><span style='color: #b08000'>0</span><span style='color: #141312'>;</span>
+<span style='color: #141312'>  </span><span style='color: #000080'><b>for</b></span><span style='color: #141312'> i = </span><span style='color: #b08000'>1</span><span style='color: #141312'>:</span><span style='color: #0000ff'><b><i>size</b></i></span><span style='color: #141312'>(x,</span><span style='color: #b08000'>1</span><span style='color: #141312'>)</span>
+<span style='color: #141312'>    f = f+</span><span style='color: #0000ff'><b><i>sum</b></i></span><span style='color: #141312'>(x(</span><span style='color: #b08000'>1</span><span style='color: #141312'>:i))^</span><span style='color: #b08000'>2</span><span style='color: #141312'>;</span>
+<span style='color: #141312'>  </span><span style='color: #000080'><b>end</b></span><span style='color: #141312'>;</span>
+<span style='color: #008000'><b>endfunction</b></span>
+
+<span style='color: #008000'><b>function</b></span><span style='color: #141312'> [f] = fcigar(x)</span>
+<span style='color: #141312'>  f = (x(</span><span style='color: #b08000'>1</span><span style='color: #141312'>))^</span><span style='color: #b08000'>2</span><span style='color: #141312'>+</span><span style='color: #b08000'>1000000</span><span style='color: #141312'>*</span><span style='color: #0000ff'><b><i>sum</b></i></span><span style='color: #141312'>(x(</span><span style='color: #b08000'>2</span><span style='color: #141312'>:</span><span style='color: #008080'><b>$</b></span><span style='color: #141312'>).^</span><span style='color: #b08000'>2</span><span style='color: #141312'>,'r');</span>
+<span style='color: #008000'><b>endfunction</b></span>
+
+<span style='color: #008000'><b>function</b></span><span style='color: #141312'> [f] = fcigtab(x)</span>
+<span style='color: #141312'>  f = ((x(</span><span style='color: #b08000'>1</span><span style='color: #141312'>))^</span><span style='color: #b08000'>2</span><span style='color: #141312'>+</span><span style='color: #b08000'>100000000</span><span style='color: #141312'>*(x(</span><span style='color: #008080'><b>$</b></span><span style='color: #141312'>)^</span><span style='color: #b08000'>2</span><span style='color: #141312'>))+</span><span style='color: #b08000'>10000</span><span style='color: #141312'>*</span><span style='color: #0000ff'><b><i>sum</b></i></span><span style='color: #141312'>(x(</span><span style='color: #b08000'>2</span><span style='color: #141312'>:</span><span style='color: #008080'><b>$</b></span><span style='color: #141312'>-</span><span style='color: #b08000'>1</span><span style='color: #141312'>).^</span><span style='color: #b08000'>2</span><span style='color: #141312'>,'r');</span>
+<span style='color: #008000'><b>endfunction</b></span>
+
+<span style='color: #008000'><b>function</b></span><span style='color: #141312'> [f] = ftablet(x)</span>
+<span style='color: #141312'>  f = </span><span style='color: #b08000'>1000000</span><span style='color: #141312'>*((x(</span><span style='color: #b08000'>1</span><span style='color: #141312'>))^</span><span style='color: #b08000'>2</span><span style='color: #141312'>)+</span><span style='color: #0000ff'><b><i>sum</b></i></span><span style='color: #141312'>(x(</span><span style='color: #b08000'>2</span><span style='color: #141312'>:</span><span style='color: #008080'><b>$</b></span><span style='color: #141312'>).^</span><span style='color: #b08000'>2</span><span style='color: #141312'>,'r');</span>
+<span style='color: #008000'><b>endfunction</b></span>
+
+<span style='color: #008000'><b>function</b></span><span style='color: #141312'> [f] = felli(x)</span>
+<span style='color: #141312'>  N = </span><span style='color: #0000ff'><b><i>size</b></i></span><span style='color: #141312'>(x,</span><span style='color: #b08000'>1</span><span style='color: #141312'>);</span>
+<span style='color: #141312'>  </span><span style='color: #000080'><b>if</b></span><span style='color: #141312'> N&lt;</span><span style='color: #b08000'>2</span><span style='color: #141312'> </span><span style='color: #000080'><b>then</b></span>
+<span style='color: #141312'>    </span><span style='color: #ff0000'><b>error</b></span><span style='color: #141312'>(</span><span style='color: #bf0303'>"dimension must be greater one"</span><span style='color: #141312'>);</span>
+<span style='color: #141312'>  </span><span style='color: #000080'><b>end</b></span><span style='color: #141312'>;</span>
+<span style='color: #141312'>  f = (</span><span style='color: #b08000'>1000000</span><span style='color: #141312'> .^((</span><span style='color: #b08000'>0</span><span style='color: #141312'>:N-</span><span style='color: #b08000'>1</span><span style='color: #141312'>)/(N-</span><span style='color: #b08000'>1</span><span style='color: #141312'>)))*(x .^</span><span style='color: #b08000'>2</span><span style='color: #141312'>);</span>
+<span style='color: #008000'><b>endfunction</b></span>
+
+<span style='color: #008000'><b>function</b></span><span style='color: #141312'> [f] = felli100(x)</span>
+<span style='color: #141312'>  N = </span><span style='color: #0000ff'><b><i>size</b></i></span><span style='color: #141312'>(x,</span><span style='color: #b08000'>1</span><span style='color: #141312'>);</span>
+<span style='color: #141312'>  </span><span style='color: #000080'><b>if</b></span><span style='color: #141312'> N&lt;</span><span style='color: #b08000'>2</span><span style='color: #141312'> </span><span style='color: #000080'><b>then</b></span>
+<span style='color: #141312'>    </span><span style='color: #ff0000'><b>error</b></span><span style='color: #141312'>(</span><span style='color: #bf0303'>"dimension must be greater one"</span><span style='color: #141312'>);</span>
+<span style='color: #141312'>  </span><span style='color: #000080'><b>end</b></span><span style='color: #141312'>;</span>
+<span style='color: #141312'>  f = (</span><span style='color: #b08000'>10000</span><span style='color: #141312'> .^((</span><span style='color: #b08000'>0</span><span style='color: #141312'>:N-</span><span style='color: #b08000'>1</span><span style='color: #141312'>)/(N-</span><span style='color: #b08000'>1</span><span style='color: #141312'>)))*(x .^</span><span style='color: #b08000'>2</span><span style='color: #141312'>);</span>
+<span style='color: #008000'><b>endfunction</b></span>
+
+<span style='color: #008000'><b>function</b></span><span style='color: #141312'> [f] = fdiffpow(x)</span>
+<span style='color: #141312'>  N = </span><span style='color: #0000ff'><b><i>size</b></i></span><span style='color: #141312'>(x,</span><span style='color: #b08000'>1</span><span style='color: #141312'>);</span>
+<span style='color: #141312'>  </span><span style='color: #000080'><b>if</b></span><span style='color: #141312'> N&lt;</span><span style='color: #b08000'>2</span><span style='color: #141312'> </span><span style='color: #000080'><b>then</b></span>
+<span style='color: #141312'>    </span><span style='color: #ff0000'><b>error</b></span><span style='color: #141312'>(</span><span style='color: #bf0303'>"dimension must be greater one"</span><span style='color: #141312'>);</span>
+<span style='color: #141312'>  </span><span style='color: #000080'><b>end</b></span><span style='color: #141312'>;</span>
+<span style='color: #141312'>  f = </span><span style='color: #0000ff'><b><i>sum</b></i></span><span style='color: #141312'>(</span><span style='color: #0000ff'><b><i>abs</b></i></span><span style='color: #141312'>(x) .^(</span><span style='color: #b08000'>2</span><span style='color: #141312'>+(</span><span style='color: #b08000'>10</span><span style='color: #141312'>*(</span><span style='color: #b08000'>0</span><span style='color: #141312'>:N-</span><span style='color: #b08000'>1</span><span style='color: #141312'>)')/(N-</span><span style='color: #b08000'>1</span><span style='color: #141312'>)),'r');</span>
+<span style='color: #008000'><b>endfunction</b></span>
+
+<span style='color: #008000'><b>function</b></span><span style='color: #141312'> [f] = frastrigin10(x)</span>
+<span style='color: #141312'>  N = </span><span style='color: #0000ff'><b><i>size</b></i></span><span style='color: #141312'>(x,</span><span style='color: #b08000'>1</span><span style='color: #141312'>);</span>
+<span style='color: #141312'>  </span><span style='color: #000080'><b>if</b></span><span style='color: #141312'> N&lt;</span><span style='color: #b08000'>2</span><span style='color: #141312'> </span><span style='color: #000080'><b>then</b></span>
+<span style='color: #141312'>    </span><span style='color: #ff0000'><b>error</b></span><span style='color: #141312'>(</span><span style='color: #bf0303'>"dimension must be greater one"</span><span style='color: #141312'>);</span>
+<span style='color: #141312'>  </span><span style='color: #000080'><b>end</b></span><span style='color: #141312'>;</span>
+<span style='color: #141312'>  scale = </span><span style='color: #b08000'>10</span><span style='color: #141312'> .^((</span><span style='color: #b08000'>0</span><span style='color: #141312'>:N-</span><span style='color: #b08000'>1</span><span style='color: #141312'>)'/(N-</span><span style='color: #b08000'>1</span><span style='color: #141312'>));</span>
+<span style='color: #141312'>  f = </span><span style='color: #b08000'>10</span><span style='color: #141312'>*</span><span style='color: #0000ff'><b><i>size</b></i></span><span style='color: #141312'>(x,</span><span style='color: #b08000'>1</span><span style='color: #141312'>)+</span><span style='color: #0000ff'><b><i>sum</b></i></span><span style='color: #141312'>(((scale .*x) .^</span><span style='color: #b08000'>2</span><span style='color: #141312'>-</span><span style='color: #b08000'>10</span><span style='color: #141312'>*</span><span style='color: #0000ff'><b><i>cos</b></i></span><span style='color: #141312'>((</span><span style='color: #b08000'>2</span><span style='color: #141312'>*</span><span style='color: #008080'><b>%pi</b></span><span style='color: #141312'>)*(scale .*x))),'r');</span>
+<span style='color: #008000'><b>endfunction</b></span>
+
+<span style='color: #008000'><b>function</b></span><span style='color: #141312'> [f] = frastn(x,n)</span>
+<span style='color: #141312'>  N = </span><span style='color: #0000ff'><b><i>size</b></i></span><span style='color: #141312'>(x,</span><span style='color: #b08000'>1</span><span style='color: #141312'>);</span>
+<span style='color: #141312'>  </span><span style='color: #000080'><b>if</b></span><span style='color: #141312'> N&lt;</span><span style='color: #b08000'>2</span><span style='color: #141312'> </span><span style='color: #000080'><b>then</b></span>
+<span style='color: #141312'>    </span><span style='color: #ff0000'><b>error</b></span><span style='color: #141312'>(</span><span style='color: #bf0303'>"dimension must be greater one"</span><span style='color: #141312'>);</span>
+<span style='color: #141312'>  </span><span style='color: #000080'><b>end</b></span><span style='color: #141312'>;</span>
+<span style='color: #141312'>  scale = n .^((</span><span style='color: #b08000'>0</span><span style='color: #141312'>:N-</span><span style='color: #b08000'>1</span><span style='color: #141312'>)'/(N-</span><span style='color: #b08000'>1</span><span style='color: #141312'>));</span>
+<span style='color: #141312'>  f = </span><span style='color: #b08000'>10</span><span style='color: #141312'>*</span><span style='color: #0000ff'><b><i>size</b></i></span><span style='color: #141312'>(x,</span><span style='color: #b08000'>1</span><span style='color: #141312'>)+</span><span style='color: #0000ff'><b><i>sum</b></i></span><span style='color: #141312'>(((scale .*x) .^</span><span style='color: #b08000'>2</span><span style='color: #141312'>-</span><span style='color: #b08000'>10</span><span style='color: #141312'>*</span><span style='color: #0000ff'><b><i>cos</b></i></span><span style='color: #141312'>((</span><span style='color: #b08000'>2</span><span style='color: #141312'>*</span><span style='color: #008080'><b>%pi</b></span><span style='color: #141312'>)*(scale .*x))),'r');</span>
+<span style='color: #008000'><b>endfunction</b></span>
+
+<span style='color: #008000'><b>function</b></span><span style='color: #141312'> [f] = frast(x)</span>
+<span style='color: #141312'>   f = frastn(x,</span><span style='color: #b08000'>1</span><span style='color: #141312'>)</span>
+<span style='color: #008000'><b>endfunction</b></span>
+
+<span style='color: #008000'><b>function</b></span><span style='color: #141312'> [f] = frast10(x)</span>
+<span style='color: #141312'>   f = frastn(x,</span><span style='color: #b08000'>10</span><span style='color: #141312'>)</span>
+<span style='color: #008000'><b>endfunction</b></span>
+
+<span style='color: #008000'><b>function</b></span><span style='color: #141312'> [f] = frast1000(x)</span>
+<span style='color: #141312'>   f = frastn(x,</span><span style='color: #b08000'>1000</span><span style='color: #141312'>)</span>
+<span style='color: #008000'><b>endfunction</b></span>
+
+<span style='color: #888786'><i>// --- 2-dimensional fitness functions</i></span>
+
+<span style='color: #008000'><b>function</b></span><span style='color: #141312'> [f] = fsphere_2(x,y)</span>
+<span style='color: #141312'>  f = x^</span><span style='color: #b08000'>2</span><span style='color: #141312'>+y^</span><span style='color: #b08000'>2</span><span style='color: #141312'>;</span>
+<span style='color: #008000'><b>endfunction</b></span>
+
+<span style='color: #008000'><b>function</b></span><span style='color: #141312'> [f] = fschwefel_2(x,y)</span>
+<span style='color: #141312'>  f = x^</span><span style='color: #b08000'>2</span><span style='color: #141312'> + (x+y)^</span><span style='color: #b08000'>2</span><span style='color: #141312'>;</span>
+<span style='color: #008000'><b>endfunction</b></span>
+
+<span style='color: #008000'><b>function</b></span><span style='color: #141312'> [f] = fcigar_2(x,y)</span>
+<span style='color: #141312'>  f = x^</span><span style='color: #b08000'>2</span><span style='color: #141312'> + </span><span style='color: #b08000'>1000000</span><span style='color: #141312'>*y^</span><span style='color: #b08000'>2</span><span style='color: #141312'>;</span>
+<span style='color: #008000'><b>endfunction</b></span>
+
+<span style='color: #008000'><b>function</b></span><span style='color: #141312'> [f] = fdiffpow_2(x,y)</span>
+<span style='color: #141312'>  f = </span><span style='color: #0000ff'><b><i>abs</b></i></span><span style='color: #141312'>(x)^</span><span style='color: #b08000'>2</span><span style='color: #141312'> + </span><span style='color: #0000ff'><b><i>abs</b></i></span><span style='color: #141312'>(y)^</span><span style='color: #b08000'>12</span><span style='color: #141312'>;</span>
+<span style='color: #008000'><b>endfunction</b></span>
+
+<span style='color: #008000'><b>function</b></span><span style='color: #141312'> [f]= frastn_2(x,y,n)</span>
+<span style='color: #141312'>  f=</span><span style='color: #b08000'>20</span><span style='color: #141312'>+(x^</span><span style='color: #b08000'>2</span><span style='color: #141312'>-</span><span style='color: #b08000'>10</span><span style='color: #141312'>*</span><span style='color: #0000ff'><b><i>cos</b></i></span><span style='color: #141312'>(</span><span style='color: #b08000'>2</span><span style='color: #141312'>*</span><span style='color: #008080'><b>%pi</b></span><span style='color: #141312'>*x)+y^</span><span style='color: #b08000'>2</span><span style='color: #141312'>-</span><span style='color: #b08000'>10</span><span style='color: #141312'>*</span><span style='color: #0000ff'><b><i>cos</b></i></span><span style='color: #141312'>(</span><span style='color: #b08000'>2</span><span style='color: #141312'>*</span><span style='color: #008080'><b>%pi</b></span><span style='color: #141312'>*n*y));</span>
+<span style='color: #008000'><b>endfunction</b></span>
+
+<span style='color: #008000'><b>function</b></span><span style='color: #141312'> [f] = frast_2(x,y)</span>
+<span style='color: #141312'>  f=frastn_2(x,y,</span><span style='color: #b08000'>1</span><span style='color: #141312'>);</span>
+<span style='color: #008000'><b>endfunction</b></span>
+
+<span style='color: #008000'><b>function</b></span><span style='color: #141312'> [f] = frast10_2(x,y)</span>
+<span style='color: #141312'>  f=frastn_2(x,y,</span><span style='color: #b08000'>10</span><span style='color: #141312'>);</span>
+<span style='color: #008000'><b>endfunction</b></span>
+
+<span style='color: #008000'><b>function</b></span><span style='color: #141312'> [f] = frast1000_2(x,y)</span>
+<span style='color: #141312'>  f=frastn_2(x,y,</span><span style='color: #b08000'>1000</span><span style='color: #141312'>);</span>
+<span style='color: #008000'><b>endfunction</b></span>
+</pre></body>
+</html>
