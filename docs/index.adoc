@@ -45,7 +45,7 @@ ans  =
   - 0.0000010
 ------------------------
 
-image:../examples/10-dimensional/images/fsphere_fitness.png[Fitness migliore (in rosso) e fitness media (in nero) in funzione della generazione]
+image:examples/10-dimensional/images/fsphere_fitness.png[Fitness migliore (in rosso) e fitness media (in nero) in funzione della generazione]
 
 Schwefel function
 ^^^^^^^^^^^^^^^^^
@@ -68,7 +68,7 @@ ans  =
   - 0.0000001
 ------------------------
 
-image:../examples/10-dimensional/images/fschwefel_fitness.png[Fitness migliore (in rosso) e fitness media (in nero) in funzione della generazione]
+image:examples/10-dimensional/images/fschwefel_fitness.png[Fitness migliore (in rosso) e fitness media (in nero) in funzione della generazione]
 
 Cigar function
 ^^^^^^^^^^^^^^
@@ -91,7 +91,7 @@ ans  =
   - 1.741D-09
 ------------------------
 
-image:../examples/10-dimensional/images/fcigar_fitness.png[Fitness migliore (in rosso) e fitness media (in nero) in funzione della generazione]
+image:examples/10-dimensional/images/fcigar_fitness.png[Fitness migliore (in rosso) e fitness media (in nero) in funzione della generazione]
 
 Cigtab function
 ^^^^^^^^^^^^^^^
@@ -114,7 +114,7 @@ ans  =
     3.052D-10
 ------------------------
 
-image:../examples/10-dimensional/images/fcigtab_fitness.png[Fitness migliore (in rosso) e fitness media (in nero) in funzione della generazione]
+image:examples/10-dimensional/images/fcigtab_fitness.png[Fitness migliore (in rosso) e fitness media (in nero) in funzione della generazione]
 
 Tablet function
 ^^^^^^^^^^^^^^^
@@ -137,7 +137,7 @@ ans  =
     0.0000014
 ------------------------
 
-image:../examples/10-dimensional/images/ftablet_fitness.png[Fitness migliore (in rosso) e fitness media (in nero) in funzione della generazione]
+image:examples/10-dimensional/images/ftablet_fitness.png[Fitness migliore (in rosso) e fitness media (in nero) in funzione della generazione]
 
 Elliptical function
 ^^^^^^^^^^^^^^^^^^^
@@ -160,7 +160,7 @@ ans  =
   - 2.300D-09
 ------------------------
 
-image:../examples/10-dimensional/images/felli_fitness.png[Fitness migliore (in rosso) e fitness media (in nero) in funzione della generazione]
+image:examples/10-dimensional/images/felli_fitness.png[Fitness migliore (in rosso) e fitness media (in nero) in funzione della generazione]
 
 Elliptical-100 function
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -183,7 +183,7 @@ ans  =
   - 4.303D-10
 ------------------------
 
-image:../examples/10-dimensional/images/felli100_fitness.png[Fitness migliore (in rosso) e fitness media (in nero) in funzione della generazione]
+image:examples/10-dimensional/images/felli100_fitness.png[Fitness migliore (in rosso) e fitness media (in nero) in funzione della generazione]
 
 Diffpow function
 ^^^^^^^^^^^^^^^^
@@ -206,7 +206,7 @@ ans  =
   - 0.1431451
 ------------------------
 
-image:../examples/10-dimensional/images/fdiffpow_fitness.png[Fitness migliore (in rosso) e fitness media (in nero) in funzione della generazione]
+image:examples/10-dimensional/images/fdiffpow_fitness.png[Fitness migliore (in rosso) e fitness media (in nero) in funzione della generazione]
 
 Rastrigin-10 function
 ^^^^^^^^^^^^^^^^^^^^^
@@ -237,7 +237,7 @@ xmean = rand(N,1)*10-5;
 sigma = 5;
 ------------------------
 
-image:../examples/10-dimensional/images/frastrigin10_fitness.png[Fitness migliore (in rosso) e fitness media (in nero) in funzione della generazione]
+image:examples/10-dimensional/images/frastrigin10_fitness.png[Fitness migliore (in rosso) e fitness media (in nero) in funzione della generazione]
 
 A 2 dimensioni
 ~~~~~~~~~~~~~~
@@ -246,7 +246,7 @@ Sphere function
 ^^^^^^^^^^^^^^^^
 Grafico della funzione:
 
-image:../examples/2-dimensional/images/fsphere.png[Sphere function]
+image:examples/2-dimensional/images/fsphere.png[Sphere function]
 
 Output finale dell'algoritmo:
 
@@ -261,21 +261,21 @@ ans  =
 
 Fitness migliore (in rosso) e fitness media (in nero) in funzione della generazione:
 
-image:../examples/2-dimensional/images/fsphere_fitness.png[Fitness migliore (in rosso) e fitness media (in nero) in funzione della generazione]
+image:examples/2-dimensional/images/fsphere_fitness.png[Fitness migliore (in rosso) e fitness media (in nero) in funzione della generazione]
 
 Fitness migliore (in rosso) e fitness media (in nero) in funzione della generazione (scala logaritmica su asse delle ordinate):
 
-image:../examples/2-dimensional/images/fsphere2_fitness.png[Fitness migliore (in rosso) e fitness media (in nero) in funzione della generazione]
+image:examples/2-dimensional/images/fsphere2_fitness.png[Fitness migliore (in rosso) e fitness media (in nero) in funzione della generazione]
 
 Path di ricerca della soluzione ottima:
 
-image:../examples/2-dimensional/images/fsphere_path.png[Path di ricerca della soluzione ottima]
+image:examples/2-dimensional/images/fsphere_path.png[Path di ricerca della soluzione ottima]
 
 Schwefel function
 ^^^^^^^^^^^^^^^^^
 Grafico della funzione:
 
-image:../examples/2-dimensional/images/fschwefel.png[Schwefel function]
+image:examples/2-dimensional/images/fschwefel.png[Schwefel function]
 
 Output finale dell'algoritmo:
 
@@ -290,17 +290,17 @@ ans  =
 
 Fitness migliore (in rosso) e fitness media (in nero) in funzione della generazione (scala logaritmica su asse delle ordinate):
 
-image:../examples/2-dimensional/images/fschwefel_fitness.png[Fitness migliore (in rosso) e fitness media (in nero) in funzione della generazione]
+image:examples/2-dimensional/images/fschwefel_fitness.png[Fitness migliore (in rosso) e fitness media (in nero) in funzione della generazione]
 
 Path di ricerca della soluzione ottima:
 
-image:../examples/2-dimensional/images/fschwefel_path.png[Path di ricerca della soluzione ottima]
+image:examples/2-dimensional/images/fschwefel_path.png[Path di ricerca della soluzione ottima]
 
 Cigar function
 ^^^^^^^^^^^^^^
 Grafico della funzione:
 
-image:../examples/2-dimensional/images/fcigar.png[Cigar function]
+image:examples/2-dimensional/images/fcigar.png[Cigar function]
 
 Output finale dell'algoritmo:
 
@@ -315,17 +315,17 @@ ans  =
 
 Fitness migliore (in rosso) e fitness media (in nero) in funzione della generazione (scala logaritmica su asse delle ordinate):
 
-image:../examples/2-dimensional/images/fcigar_fitness.png[Fitness migliore (in rosso) e fitness media (in nero) in funzione della generazione]
+image:examples/2-dimensional/images/fcigar_fitness.png[Fitness migliore (in rosso) e fitness media (in nero) in funzione della generazione]
 
 Path di ricerca della soluzione ottima:
 
-image:../examples/2-dimensional/images/fcigar_path.png[Path di ricerca della soluzione ottima]
+image:examples/2-dimensional/images/fcigar_path.png[Path di ricerca della soluzione ottima]
 
 Rastrigin function
 ^^^^^^^^^^^^^^^^^^
 Grafico della funzione:
 
-image:../examples/2-dimensional/images/frast.png[Rastrigin function]
+image:examples/2-dimensional/images/frast.png[Rastrigin function]
 
 Output finale dell'algoritmo:
 
@@ -340,17 +340,17 @@ ans  =
 
 Fitness migliore (in rosso) e fitness media (in nero) in funzione della generazione (scala logaritmica su asse delle ordinate):
 
-image:../examples/2-dimensional/images/frast_fitness.png[Fitness migliore (in rosso) e fitness media (in nero) in funzione della generazione]
+image:examples/2-dimensional/images/frast_fitness.png[Fitness migliore (in rosso) e fitness media (in nero) in funzione della generazione]
 
 Path di ricerca della soluzione ottima:
 
-image:../examples/2-dimensional/images/frast_path.png[Path di ricerca della soluzione ottima]
+image:examples/2-dimensional/images/frast_path.png[Path di ricerca della soluzione ottima]
 
 Rastrigin-10 function
 ^^^^^^^^^^^^^^^^^^^^^
 Grafico della funzione:
 
-image:../examples/2-dimensional/images/frast10.png[Rastrigin-10 function]
+image:examples/2-dimensional/images/frast10.png[Rastrigin-10 function]
 
 Output finale dell'algoritmo:
 
@@ -365,17 +365,17 @@ ans  =
 
 Fitness migliore (in rosso) e fitness media (in nero) in funzione della generazione (scala logaritmica su asse delle ordinate):
 
-image:../examples/2-dimensional/images/frast10_fitness.png[Fitness migliore (in rosso) e fitness media (in nero) in funzione della generazione]
+image:examples/2-dimensional/images/frast10_fitness.png[Fitness migliore (in rosso) e fitness media (in nero) in funzione della generazione]
 
 Path di ricerca della soluzione ottima:
 
-image:../examples/2-dimensional/images/frast10_path.png[Path di ricerca della soluzione ottima]
+image:examples/2-dimensional/images/frast10_path.png[Path di ricerca della soluzione ottima]
 
 Rastrigin-1000 function
 ^^^^^^^^^^^^^^^^^^^^^
 Grafico della funzione:
 
-image:../examples/2-dimensional/images/frast1000.png[Rastrigin-1000 function]
+image:examples/2-dimensional/images/frast1000.png[Rastrigin-1000 function]
 
 Output finale dell'algoritmo:
 
@@ -390,8 +390,8 @@ ans  =
 
 Fitness migliore (in rosso) e fitness media (in nero) in funzione della generazione (scala logaritmica su asse delle ordinate):
 
-image:../examples/2-dimensional/images/frast1000_fitness.png[Fitness migliore (in rosso) e fitness media (in nero) in funzione della generazione]
+image:examples/2-dimensional/images/frast1000_fitness.png[Fitness migliore (in rosso) e fitness media (in nero) in funzione della generazione]
 
 Path di ricerca della soluzione ottima:
 
-image:../examples/2-dimensional/images/frast1000_path.png[Path di ricerca della soluzione ottima]
+image:examples/2-dimensional/images/frast1000_path.png[Path di ricerca della soluzione ottima]
